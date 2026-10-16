@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Continu · PowerPoint Help</title>
+<style>
+:root{--navy:#2A4356;--navy2:#324E64;--green:#B5EB03;--sage:#9AC490;--sky:#A5D4F0;--mist:#C2D0DA;--mauve:#CEA1C6;--stone:#B8C2B2;--pale:#E6EAE4;
+  --bg:#fff;--ink:#2A4356;--soft:#F3F5F2;--soft2:#fff;--muted:#5F7383;--line:#E3E7E1;--pillOn:#fff;--pillOnInk:#2A4356;--panel:#fff;--logo:#2A4356}
+body.dark{--bg:#2A4356;--ink:#fff;--soft:#324E64;--soft2:#3A5A72;--muted:#B8C2B2;--line:rgba(255,255,255,.12);--pillOn:#B5EB03;--pillOnInk:#2A4356;--panel:#324E64;--logo:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#2A4356}
+body{min-height:100vh;color:var(--ink);font-family:Effra,"Inter","Segoe UI",system-ui,sans-serif;line-height:1.45;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.pad{padding-left:clamp(20px,3.5vw,64px);padding-right:clamp(20px,3.5vw,64px)}
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:24px;padding-bottom:24px;position:relative;z-index:3}
+.logo{height:56px;width:auto;color:var(--logo);display:block}
+.pills{display:flex;gap:4px;background:var(--soft);border-radius:999px;padding:5px;flex-wrap:wrap}
+.pill{padding:8px 16px;border-radius:999px;font-size:14px}
+.pill:hover{background:var(--soft2)}
+.pill.on{background:var(--pillOn);color:var(--pillOnInk);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.search{display:flex;align-items:center;gap:8px;background:var(--soft);border-radius:999px;padding:10px 16px;width:min(300px,40vw)}
+.search input{border:0;background:none;font:inherit;font-size:14px;color:var(--ink);outline:none;width:100%}
+.search input::placeholder{color:var(--muted)}
+.search svg{flex:0 0 16px;stroke:var(--ink)}
+/* layout: sidebar + main */
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(20px,3vw,48px);position:relative;z-index:2}
+.side{position:sticky;top:20px;align-self:start;max-height:calc(100vh - 40px);overflow:auto;padding:22px 20px;background:var(--soft);border-radius:24px;margin-top:8px}
+.side h4{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:16px 0 6px;color:var(--muted)}
+.side h4:first-child{margin-top:0}
+.side a{display:flex;align-items:center;gap:10px;padding:7px 10px;margin:0 -10px;border-radius:10px;color:var(--ink);text-decoration:none;font-size:15px}
+.side a i{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
+.side a:hover{background:var(--soft2)}
+.side a.hide{display:none}
+.side .count{font-size:13px;color:var(--muted);margin-bottom:6px}
+.jump{display:none;width:100%;padding:12px 14px;border-radius:14px;border:0;background:var(--soft);color:var(--ink);font:inherit;font-size:15px;margin-bottom:12px}
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:32px;align-items:end;padding:36px 0 36px}
+.intro .dot{width:44px;height:44px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+body.dark .intro .dot{background:#fff}
+.intro .dot i{width:18px;height:18px;border-radius:50%;border:5px solid var(--green)}
+.intro p{font-size:16px;max-width:360px}
+h1{font-weight:300;font-size:clamp(48px,7.4vw,118px);line-height:1;letter-spacing:-.03em}
+h1 em{font-style:normal;background:linear-gradient(transparent 64%,var(--green) 64%,var(--green) 86%,transparent 86%)}
+body.dark h1 em{color:#fff;background:none;color:var(--green)}
+.rings{position:absolute;top:-40px;right:-140px;width:640px;height:540px;pointer-events:none;z-index:1}
+/* carousel */
+.main{min-width:0}
+.trackwrap{margin-right:calc(-1*clamp(20px,3.5vw,64px))}
+.track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px clamp(20px,3.5vw,64px) 22px 0;scrollbar-width:none}
+.track::-webkit-scrollbar{display:none}
+.card{flex:0 0 clamp(300px,30vw,500px);aspect-ratio:1.42;border-radius:28px;position:relative;overflow:hidden;scroll-snap-align:start;text-align:left;padding:24px;display:flex;flex-direction:column;justify-content:flex-end;color:#2A4356;transition:transform .2s}
+.card:hover,.card:focus-visible{transform:translateY(-4px);outline:none}
+.card .pic{position:absolute;top:20px;right:20px;width:54%;height:50%;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.45)}
+.card .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.card .go{position:absolute;top:22px;left:22px;width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center}
+.badge{display:inline-block;border:1.4px solid currentColor;border-radius:999px;padding:1px 9px;font-size:12px;margin-bottom:8px;align-self:flex-start}
+.card b{font-size:clamp(20px,1.9vw,28px);font-weight:500;line-height:1.1;max-width:62%}
+.card small{font-size:14px;margin-top:6px}
+.c0{background:var(--green)}.c1{background:var(--sky)}.c2{background:var(--sage)}.c3{background:var(--mauve)}.c4{background:var(--mist)}.c5{background:var(--stone)}.c6{background:var(--pale)}
+.progress{margin-right:0;height:6px;border-radius:6px;background:var(--soft);position:relative}
+.progress i{position:absolute;top:0;height:100%;border-radius:6px;background:var(--ink)}
+body.dark .progress i{background:var(--green)}
+.empty{padding:20px 0;color:var(--muted);display:none}
+footer{padding-top:40px;padding-bottom:36px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* viewer */
+.viewer{position:fixed;inset:0;background:rgba(20,32,42,.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+.viewer.on{display:flex}
+.panel{background:var(--panel);border-radius:28px;width:min(1280px,100%);max-height:100%;overflow:auto;display:grid;grid-template-columns:1fr 330px}
+.media{background:#1d3040;display:flex;align-items:center;justify-content:center;min-height:300px}
+.media img{width:100%;height:auto;display:block}
+.text{padding:28px;position:relative}
+.text h3{font-weight:400;font-size:26px;line-height:1.1;margin:10px 0 16px}
+.text ol{list-style:none;counter-reset:s}
+.text li{counter-increment:s;position:relative;padding-left:36px;margin-bottom:12px;font-size:15px}
+.text li:before{content:counter(s);position:absolute;left:0;top:0;width:25px;height:25px;border-radius:50%;background:var(--green);color:#2A4356;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.tip{margin-top:16px;background:var(--soft);border-radius:14px;padding:12px 14px;font-size:14px}
+body.dark .tip{background:var(--soft2)}
+.close{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:var(--soft)}
+@media (max-width:980px){.layout{grid-template-columns:1fr}.side{display:none}.jump{display:block}.hero{grid-template-columns:1fr}.bar{flex-wrap:wrap}.pills{order:3;width:100%}.panel{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="dark">
+<svg class="rings" viewBox="0 0 640 540" fill="none" aria-hidden="true">
+  <ellipse cx="430" cy="180" rx="255" ry="255" stroke="#B5EB03" stroke-width="2"/>
+  <ellipse cx="480" cy="310" rx="195" ry="112" transform="rotate(28 480 310)" stroke="#B5EB03" stroke-width="2"/>
+</svg>
+<div class="bar pad">
+  <svg class="logo" viewBox="25 155 450 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Continu"><defs></defs><path d="M119.2 161.1C70.1 161.1 30.2 200.9 30.2 250.1 30.2 299.3 70 339.1 119.2 339.1 168.4 339.1 208.2 299.3 208.2 250.1 208.2 200.9 168.4 161.1 119.2 161.1M119.2 285.6C99.6 285.6 83.7 269.7 83.7 250.1 83.7 230.5 99.6 214.6 119.2 214.6 138.8 214.6 154.7 230.5 154.7 250.1 154.7 269.7 138.8 285.6 119.2 285.6" fill="#B5EB00"/><path d="M263.6 263.2C261.6 265.2 259.4 266.7 256.9 267.7 254.4 268.7 251.9 269.2 249.3 269.2 246.7 269.2 244.1 268.7 241.7 267.7 239.2 266.7 237 265.2 235 263.2 233 261.3 231.5 259.1 230.6 256.6 229.6 254.1 229.2 251.6 229.2 249 229.2 246.4 229.7 243.9 230.6 241.4 231.6 238.9 233 236.7 235 234.7 237 232.7 239.2 231.2 241.7 230.2 244.2 229.2 246.7 228.7 249.3 228.7 251.9 228.7 254.5 229.2 256.9 230.2 259.4 231.2 261.6 232.7 263.6 234.7L258 240.3C256.1 238.4 254 237.2 251.9 236.8 249.8 236.4 247.8 236.5 245.8 237.1 243.9 237.8 242.1 238.8 240.6 240.3 239.1 241.8 238 243.5 237.4 245.5 236.7 247.4 236.6 249.5 237 251.6 237.4 253.7 238.6 255.8 240.5 257.7 241.7 258.9 243 259.8 244.5 260.4 246 261 247.6 261.3 249.1 261.3 250.6 261.3 252.2 261 253.7 260.4 255.2 259.8 256.6 258.9 257.7 257.7L263.3 263.2 263.6 263.2Z" fill="currentColor"/><path d="M295.8 249C295.8 247.3 295.5 245.7 294.8 244.2 294.1 242.7 293.3 241.4 292.2 240.3 291.1 239.2 289.8 238.3 288.3 237.7 286.8 237 285.2 236.7 283.5 236.7 281.8 236.7 280.2 237 278.7 237.7 277.2 238.4 275.9 239.2 274.8 240.3 273.7 241.4 272.8 242.7 272.2 244.2 271.6 245.7 271.3 247.3 271.3 249 271.3 250.7 271.6 252.3 272.2 253.8 272.8 255.3 273.7 256.6 274.8 257.7 275.9 258.8 277.2 259.7 278.7 260.3 280.2 260.9 281.8 261.2 283.5 261.2 285.2 261.2 286.8 260.9 288.3 260.3 289.8 259.7 291.1 258.8 292.2 257.7 293.3 256.6 294.2 255.3 294.8 253.8 295.5 252.3 295.8 250.7 295.8 249M303.7 249C303.7 251.8 303.2 254.4 302.1 256.8 301 259.2 299.6 261.4 297.8 263.2 296 265 293.8 266.5 291.4 267.5 289 268.6 286.3 269.1 283.6 269.1 280.9 269.1 278.2 268.6 275.8 267.5 273.4 266.4 271.2 265 269.4 263.2 267.5 261.4 266.1 259.2 265.1 256.8 264 254.4 263.5 251.7 263.5 249 263.5 246.3 264 243.6 265.1 241.2 266.1 238.8 267.6 236.6 269.4 234.8 271.2 233 273.4 231.5 275.8 230.5 278.2 229.4 280.9 228.9 283.6 228.9 286.3 228.9 289 229.4 291.4 230.5 293.8 231.6 296 233 297.8 234.8 299.6 236.6 301.1 238.8 302.1 241.2 303.2 243.6 303.7 246.3 303.7 249" fill="currentColor"/><path d="M339.6 269.2 339.6 249C339.6 247.3 339.3 245.7 338.6 244.2 337.9 242.7 337.1 241.4 336 240.3 334.9 239.2 333.6 238.3 332.1 237.7 330.6 237 329 236.7 327.3 236.7 325.6 236.7 324 237 322.5 237.7 321 238.4 319.7 239.2 318.6 240.3 317.5 241.4 316.6 242.7 316 244.2 315.4 245.7 315.1 247.3 315.1 249L315.1 269.2 307.2 269.2 307.2 249C307.2 246.2 307.7 243.6 308.8 241.1 309.9 238.6 311.3 236.5 313.1 234.7 314.9 232.9 317.1 231.4 319.5 230.4 321.9 229.3 324.6 228.8 327.3 228.8 330 228.8 332.7 229.3 335.1 230.4 337.5 231.5 339.7 232.9 341.5 234.7 343.3 236.5 344.8 238.7 345.8 241.1 346.8 243.6 347.4 246.2 347.4 249L347.4 269.2 339.5 269.2 339.6 269.2Z" fill="currentColor"/><path d="M371 236.8 358.9 236.8 358.9 253.1C358.9 255.4 359.7 257.4 361.3 259 362.9 260.6 364.8 261.4 367.2 261.4L371 261.4 371 269.3 367.2 269.3C365 269.3 362.9 268.9 360.9 268 358.9 267.1 357.2 266 355.7 264.5 354.3 263 353.1 261.3 352.2 259.3 351.3 257.3 350.9 255.2 350.9 253L350.9 218.4 358.8 218.4 358.8 228.8 370.9 228.8 370.9 236.7 371 236.7Z" fill="currentColor"/><rect x="375.8" y="228.8" width="7.9" height="40.3" fill="currentColor"/><g><path d="M420.9 269.2 420.9 249C420.9 247.3 420.6 245.7 419.9 244.2 419.2 242.7 418.4 241.4 417.3 240.3 416.2 239.2 414.9 238.3 413.4 237.7 411.9 237 410.3 236.7 408.6 236.7 406.9 236.7 405.3 237 403.8 237.7 402.3 238.4 401 239.2 399.9 240.3 398.8 241.4 397.9 242.7 397.3 244.2 396.7 245.7 396.4 247.3 396.4 249L396.4 269.2 388.5 269.2 388.5 249C388.5 246.2 389 243.6 390.1 241.1 391.2 238.6 392.6 236.5 394.4 234.7 396.2 232.9 398.4 231.4 400.8 230.4 403.2 229.3 405.9 228.8 408.6 228.8 411.3 228.8 414 229.3 416.4 230.4 418.8 231.5 421 232.9 422.8 234.7 424.6 236.5 426.1 238.7 427.1 241.1 428.2 243.6 428.7 246.2 428.7 249L428.7 269.2 420.8 269.2 420.9 269.2Z" fill="currentColor"/><path d="M468.8 228.9 468.8 251.7C468.8 254.1 468.3 256.4 467.4 258.6 466.5 260.7 465.2 262.6 463.6 264.2 462 265.8 460.1 267.1 458 268 455.9 268.9 453.6 269.4 451.1 269.4 448.6 269.4 446.4 268.9 444.2 268 442 267.1 440.2 265.8 438.6 264.2 437 262.6 435.8 260.7 434.9 258.6 434 256.5 433.5 254.2 433.5 251.7L433.5 228.9 441.4 228.9 441.4 251.7C441.4 253.1 441.7 254.3 442.2 255.5 442.7 256.7 443.4 257.7 444.3 258.6 445.2 259.5 446.2 260.2 447.4 260.7 448.6 261.2 449.8 261.5 451.2 261.5 452.6 261.5 453.8 261.2 455 260.7 456.2 260.2 457.2 259.5 458.1 258.6 459 257.7 459.7 256.7 460.2 255.5 460.7 254.3 461 253.1 461 251.7L461 228.9 468.9 228.9 468.9 228.9Z" fill="currentColor"/></g></svg>
+  <nav class="pills" id="pills" aria-label="Help areas"></nav>
+  <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Search help" aria-label="Search help topics"></label>
+</div>
+<div class="layout pad">
+  <aside class="side" aria-label="All help topics"><p class="count" id="count"></p><div id="menu"></div></aside>
+  <main class="main">
+    <section class="hero">
+      <div class="intro"><div class="dot"><i></i></div><p>Short animated how-tos for the Continu PowerPoint template. Pick a topic to watch every click, step by step.</p></div>
+      <h1>PowerPoint<br><em>help</em></h1>
+    </section>
+    <select class="jump" id="jump" aria-label="Jump to a topic"></select>
+    <div class="trackwrap"><div class="track" id="track"></div></div>
+    <div class="progress" id="progress"><i id="thumb"></i></div>
+    <p class="empty" id="empty">No topic matches that yet.</p>
+  </main>
+</div>
+<footer class="pad"><span>Continu · PowerPoint help for the Continu template</span><span>Each animation loops – watch it as many times as you like.</span></footer>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true"><div class="panel">
+  <div class="media"><img id="gif" alt=""></div>
+  <div class="text"><button class="close" id="close" aria-label="Close">✕</button><span class="badge" id="vbadge"></span><h3 id="title"></h3><ol id="steps"></ol><div class="tip" id="tip"></div></div>
+</div></div>
+<script>
+// ---- Topics. Add one entry per how-to. id = link anchor (…/help.html#crop-image).
+// media = file name (without extension) of the GIF + JPG in assets/GIFs/. Demo topics reuse two recordings for now.
+const DIR = "assets/GIFs/";
+const RAW = "https://raw.githubusercontent.com/IdeerCreative/ideer_web_assets/main/assets/GIFs/";
+const TOPICS = [
+ {id:"crop-image",group:"Images",title:"Crop an image",media:"crop-image",time:"25 sec",
+  steps:["Click the picture","Open the <b>Picture Format</b> tab","Click <b>Crop</b> (right-hand end of the ribbon)","Drag the picture or its corners to reposition it","Click <b>Crop</b> again to finish"],
+  tip:"In a picture placeholder, <b>Crop → Fill</b> fills the frame and <b>Crop → Fit</b> shows the whole picture."},
+ {id:"replace-picture",group:"Images",title:"Replace a picture",media:"crop-image",time:"15 sec",
+  steps:["Right-click the picture","Choose <b>Change Picture</b>","Choose <b>From a File…</b> and pick your image","The new picture keeps the same size and position"]},
+ {id:"fill-fit",group:"Images",title:"Fill or fit a picture in its frame",media:"crop-image",time:"15 sec",
+  steps:["Click the picture","Open the <b>Picture Format</b> tab","Click the small arrow under <b>Crop</b>","Choose <b>Fill</b> to fill the frame, or <b>Fit</b> to show the whole picture","Click <b>Crop</b> to finish"]},
+ {id:"link-text",group:"Text and links",title:"Link text",media:"link-text",time:"25 sec",
+  steps:["Select the text you want to link","Right-click and choose <b>Link…</b> (or Cmd+K / Ctrl+K)","Type or paste the web address, then click <b>OK</b>","Click away – the text is now a link"],
+  tip:"Use <b>This Document</b> in the Link window to link to another slide. Links work in Slide Show."},
+ {id:"link-button",group:"Text and links",title:"Link a button to another slide",media:"link-text",time:"20 sec",
+  steps:["Click the edge of the button so the whole shape is selected","Press Cmd+K / Ctrl+K (or <b>Insert → Link</b>)","Choose <b>This Document</b>","Pick the slide to jump to, then click <b>OK</b>"],
+  tip:"Links only work in Slide Show."},
+ {id:"format-painter",group:"Text and links",title:"Copy formatting with Format Painter",media:"link-text",time:"15 sec",
+  steps:["Click inside the text that has the style you want","On the <b>Home</b> tab, click <b>Format Painter</b> (the brush)","Drag across the text you want to change"],
+  tip:"Double-click the brush to apply it several times; press Esc to stop."},
+ {id:"green-words",group:"Text and links",title:"Turn key words green",media:"link-text",time:"15 sec",
+  steps:["Select the word or phrase","On the <b>Home</b> tab, click the arrow next to <b>Font Colour</b>","Choose the Continu green from <b>Theme Colours</b>"],
+  tip:"Highlight one short phrase per title – the words that carry the message."},
+ {id:"fit-text",group:"Text and links",title:"Make text fit without shrinking it",media:"link-text",time:"20 sec",
+  steps:["Click into the text box and check where the text runs past the box","Shorten the copy – aim for the same number of lines as the original","Keep the font size as it is; never resize the box"],
+  tip:"The template is designed for a set amount of text per box."},
+ {id:"change-layout",group:"Slides and layouts",title:"Change a slide's layout",media:"crop-image",time:"15 sec",
+  steps:["Select the slide","On the <b>Home</b> tab, click <b>Layout</b>","Pick the layout you want – your content moves into the new boxes"]},
+ {id:"reset-slide",group:"Slides and layouts",title:"Reset a slide to its design",media:"crop-image",time:"10 sec",
+  steps:["Select the slide","On the <b>Home</b> tab, click <b>Reset</b>","Positions, sizes and text styles go back to the template design – your words stay"]},
+ {id:"duplicate-slide",group:"Slides and layouts",title:"Duplicate a slide",media:"crop-image",time:"10 sec",
+  steps:["Right-click the slide thumbnail on the left","Choose <b>Duplicate Slide</b> (or Cmd+D / Ctrl+D)"]},
+ {id:"hide-slide",group:"Slides and layouts",title:"Hide a slide from the presentation",media:"crop-image",time:"10 sec",
+  steps:["Right-click the slide thumbnail","Choose <b>Hide Slide</b>","It stays in the file but is skipped in Slide Show"]},
+ {id:"sections",group:"Slides and layouts",title:"Organise slides into sections",media:"crop-image",time:"20 sec",
+  steps:["Right-click between two slide thumbnails","Choose <b>Add Section</b> and give it a name","Click the arrow beside a section name to collapse or expand it"]},
+ {id:"save-copy",group:"Files and presenting",title:"Save your deck as a new file",media:"link-text",time:"10 sec",
+  steps:["Click <b>File → Save As…</b>","Give the deck a new name, e.g. “Continu – Company name”","Click <b>Save</b> – the template stays untouched"]},
+ {id:"speaker-notes",group:"Files and presenting",title:"Add speaker notes",media:"link-text",time:"10 sec",
+  steps:["Click <b>Click to add notes</b> below the slide (or <b>View → Notes</b>)","Type your notes","They show in Presenter View, not on the slide"]}
+];
+const $ = id => document.getElementById(id);
+const arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2A4356" stroke-width="2.4"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+const GROUPS = [...new Set(TOPICS.map(t => t.group))];
+const colour = t => "c" + (TOPICS.indexOf(t) % 6);
+let area = "All";
+function src(img, file){ img.onerror = () => { if(!img.src.startsWith(RAW)) img.src = RAW + file; }; img.src = DIR + file; }
+function matches(t){ const f = $("q").value.trim().toLowerCase(); return (area==="All"||t.group===area) && (!f || (t.title+" "+t.group+" "+t.steps.join(" ")).toLowerCase().includes(f)); }
+function pills(){
+  $("pills").innerHTML = ["All",...GROUPS].map(g => `<button class="pill${g===area?' on':''}" data-g="${g}">${g}</button>`).join("");
+  document.querySelectorAll(".pill").forEach(p => p.onclick = () => { area = p.dataset.g; pills(); render(); });
+}
+function menu(){
+  $("menu").innerHTML = GROUPS.map(g => `<h4>${g}</h4>` + TOPICS.filter(t => t.group===g).map(t =>
+    `<a href="#${t.id}" data-id="${t.id}"><i class="${colour(t)}"></i>${t.title}</a>`).join("")).join("");
+  $("jump").innerHTML = `<option value="">Jump to a topic…</option>` + GROUPS.map(g => `<optgroup label="${g}">` +
+    TOPICS.filter(t => t.group===g).map(t => `<option value="${t.id}">${t.title}</option>`).join("") + `</optgroup>`).join("");
+  $("jump").onchange = e => { if(e.target.value) location.hash = e.target.value; e.target.value = ""; };
+}
+function render(){
+  const list = TOPICS.filter(matches);
+  $("track").innerHTML = list.map(t =>
+    `<button class="card ${colour(t)}" data-id="${t.id}" aria-label="${t.title}">
+       <span class="go">${arrow}</span><span class="pic"><img alt="" data-file="${t.media}.jpg"></span>
+       <span class="badge">${t.group}</span><b>${t.title}</b><small>${t.steps.length} steps · ${t.time}</small></button>`).join("");
+  document.querySelectorAll(".card img").forEach(im => src(im, im.dataset.file));
+  document.querySelectorAll(".card").forEach(c => c.onclick = () => { location.hash = c.dataset.id; });
+  document.querySelectorAll(".side a").forEach(a => a.classList.toggle("hide", !list.some(t => t.id===a.dataset.id)));
+  document.querySelectorAll(".side h4").forEach(h => { let n=h.nextElementSibling, any=false; while(n && n.tagName==="A"){ if(!n.classList.contains("hide")) any=true; n=n.nextElementSibling; } h.style.display = any ? "" : "none"; });
+  $("count").textContent = list.length === TOPICS.length ? `${TOPICS.length} topics` : `${list.length} of ${TOPICS.length} topics`;
+  $("empty").style.display = list.length ? "none" : "block"; $("track").scrollLeft = 0; prog();
+}
+function prog(){
+  const t = $("track"), max = t.scrollWidth - t.clientWidth, w = t.clientWidth / t.scrollWidth;
+  $("progress").style.visibility = max > 4 ? "visible" : "hidden";
+  $("thumb").style.width = (w*100) + "%"; $("thumb").style.left = (max>0 ? t.scrollLeft/max*(1-w)*100 : 0) + "%";
+}
+function open(id){
+  const t = TOPICS.find(x => x.id === id); if(!t){ shut(); return; }
+  src($("gif"), t.media + ".gif"); $("gif").alt = t.title + " – animated how-to";
+  $("vbadge").textContent = t.group; $("title").textContent = t.title;
+  $("steps").innerHTML = t.steps.map(s => `<li>${s}</li>`).join("");
+  $("tip").innerHTML = t.tip || ""; $("tip").style.display = t.tip ? "block" : "none";
+  $("viewer").classList.add("on"); document.title = t.title + " · Continu PowerPoint Help";
+}
+function shut(){ $("viewer").classList.remove("on"); $("gif").removeAttribute("src"); document.title = "Continu · PowerPoint Help"; }
+$("close").onclick = () => { history.replaceState(null,"",location.pathname); shut(); };
+$("viewer").onclick = e => { if(e.target.id === "viewer") $("close").onclick(); };
+document.addEventListener("keydown", e => { if(e.key === "Escape") $("close").onclick(); });
+$("q").oninput = render; $("track").addEventListener("scroll", prog); window.addEventListener("resize", prog);
+window.addEventListener("hashchange", () => open(location.hash.slice(1)));
+pills(); menu(); render(); if(location.hash) open(location.hash.slice(1));
+</script>
+</body>
+</html>
