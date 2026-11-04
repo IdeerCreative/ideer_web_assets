@@ -115,11 +115,6 @@ footer{padding-top:40px;padding-bottom:36px;color:var(--muted);font-size:13px;di
 .panel{background:var(--panel);border-radius:28px;width:min(1280px,100%);max-height:100%;overflow:auto;display:grid;grid-template-columns:1fr 330px}
 .media{background:#1d3040;display:flex;align-items:center;justify-content:center;min-height:240px}
 .media img{width:100%;height:auto;display:block}
-.media video{width:100%;height:auto;display:none;background:#000}
-.panel.vid .media img{display:none}.panel.vid .media video{display:block}
-.panel.vid{grid-template-columns:1fr 300px}
-.text li.ch{cursor:pointer}.text li.ch small{display:block;opacity:.65;font-size:12px}
-.text li.ch.on{font-weight:600}
 .text{padding:28px;position:relative}
 .text h3{font-weight:400;font-size:26px;line-height:1.1;margin:10px 0 16px;padding-right:44px}
 .text ol{list-style:none;counter-reset:s}
@@ -194,20 +189,15 @@ body.dark .tip{background:var(--soft2)}
 </div></div>
 
 <div class="viewer" id="viewer" role="dialog" aria-modal="true"><div class="panel">
-  <div class="media"><img id="gif" alt=""><video id="vid" controls playsinline preload="metadata"></video></div>
+  <div class="media"><img id="gif" alt=""></div>
   <div class="text"><button class="close" id="close" aria-label="Close">✕</button><span class="badge" id="vbadge"></span><h3 id="title"></h3><ol id="steps"></ol><div class="tip" id="tip"></div></div>
 </div></div>
 <script>
 // ---- Topics. Add one entry per how-to. id = link anchor (…/help.html#crop-image).
 // media = file name (no extension) of the GIF + JPG in assets/GIFs/. Demo topics reuse two recordings for now.
 const DIR = "assets/GIFs/";
-const VDIR = "assets/Videos/";
 const RAW = "https://raw.githubusercontent.com/IdeerCreative/ideer_web_assets/main/assets/GIFs/";
 const TOPICS = [
- {id:"rams-flow",app:"word",group:"RAMS",title:"Build the RAMS approval flow",time:"7 min",keywords:"rams power automate approval flow sharepoint pdf email chatgpt risk assessment method statement",
-  media:"rams-approval-flow", video:"rams-approval-flow",
-  chapters:[[4.5,"Create the flow"],[31.3,"Set up the trigger"],[51.1,"Add Get file metadata"],[75.5,"Add Get file properties"],[102.0,"Start and wait for an approval"],[172.4,"Add a Condition"],[203.4,"Convert Word Document to PDF"],[258.5,"Send an email (V2)"],[347.7,"Save and test"]],
-  tip:"Yellow labels in the video show where to use Continu's own details. Full written steps: the Continu RAMS builder guide, Part 4."},
  // app: "powerpoint" | "word".  media/steps: {mac, pc} – if only one is given it is used for both.
  // keywords: extra search words people might type.  Demo topics reuse two Mac recordings for now.
  {id:"crop-image",app:"powerpoint",group:"Images",title:"Crop an image",time:"25 sec",keywords:"trim cut picture photo",
@@ -319,7 +309,7 @@ function switches(){
 document.querySelectorAll("#osSeg button").forEach(b => b.onclick = () => { os = b.dataset.os; store.set("help-os", os); switches(); render(); if($("viewer").classList.contains("on")) open(location.hash.slice(1)); });
 document.querySelectorAll("#appSeg button").forEach(b => b.onclick = () => { app = b.dataset.app; store.set("help-app", app); area = "All"; switches(); menus(); render(); });
 function src(img, file){ img.onerror = () => { if(!img.src.startsWith(RAW)) img.src = RAW + file; }; img.src = DIR + file; }
-function matches(t){ const f = $("q").value.trim().toLowerCase(); return t.app===app && (area==="All"||t.group===area) && (!f || (t.title+" "+t.group+" "+(t.keywords||"")+" "+(t.video ? t.chapters.map(c => c[1]).join(" ") : pick(t.steps).join(" "))).toLowerCase().includes(f)); }
+function matches(t){ const f = $("q").value.trim().toLowerCase(); return t.app===app && (area==="All"||t.group===area) && (!f || (t.title+" "+t.group+" "+(t.keywords||"")+" "+pick(t.steps).join(" ")).toLowerCase().includes(f)); }
 function setArea(g){ area = g; render(); if(mobile()){ const y = $("track").getBoundingClientRect().top + scrollY - 80; if (scrollY > y) window.scrollTo({top:y, behavior:"smooth"});  } }
 function menus(){
   // desktop sidebar: area headings filter, topics open
@@ -346,9 +336,9 @@ function render(){
   document.querySelectorAll("#dmenu .area").forEach(b => b.classList.toggle("on", b.dataset.g===area));
   $("track").innerHTML = list.map(t =>
     `<button class="card ${colour(t)}" data-id="${t.id}" aria-label="${t.title}">
-       <span class="go">${arrow}</span><span class="pic"><img alt="" loading="lazy" data-file="${pick(t.media)}.jpg"${t.video ? ` data-vid="${t.video}"` : ""}></span>
-       <span class="badge">${t.group}</span><b>${t.title}</b><small>${t.video ? "Video" : pick(t.steps).length + " steps"} · ${t.time}</small></button>`).join("");
-  document.querySelectorAll(".card img").forEach(im => im.dataset.vid ? (im.src = VDIR + im.dataset.vid + ".jpg") : src(im, im.dataset.file));
+       <span class="go">${arrow}</span><span class="pic"><img alt="" loading="lazy" data-file="${pick(t.media)}.jpg"></span>
+       <span class="badge">${t.group}</span><b>${t.title}</b><small>${pick(t.steps).length} steps · ${t.time}</small></button>`).join("");
+  document.querySelectorAll(".card img").forEach(im => src(im, im.dataset.file));
   document.querySelectorAll(".card").forEach(c => c.onclick = () => { location.hash = c.dataset.id; });
   document.querySelectorAll(".side a").forEach(a => a.classList.toggle("hide", !list.some(t => t.id===a.dataset.id)));
   document.querySelectorAll(".side .grp").forEach(h => { let n=h.nextElementSibling, any=false; while(n && n.tagName==="A"){ if(!n.classList.contains("hide")) any=true; n=n.nextElementSibling; } h.style.display = any ? "" : "none"; });
@@ -362,21 +352,13 @@ function prog(){
 }
 function open(id){
   const t = TOPICS.find(x => x.id === id); if(!t){ shut(); return; }
-  const isVid = !!t.video; $("viewer").querySelector(".panel").classList.toggle("vid", isVid);
-  if (isVid) { $("gif").removeAttribute("src"); $("vid").src = VDIR + t.video + ".mp4"; $("vid").poster = VDIR + t.video + ".jpg"; }
-  else { $("vid").removeAttribute("src"); src($("gif"), pick(t.media) + ".gif"); $("gif").alt = t.title + " – animated how-to"; }
-  $("vbadge").textContent = t.video ? t.group + " · Video" : t.group + " · " + (os==="pc" ? "PC" : "Mac"); $("title").textContent = t.title;
-  if (isVid) {
-    const fmt = s => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
-    $("steps").innerHTML = t.chapters.map(c => `<li class="ch" data-t="${c[0]}">${c[1]}<small>${fmt(c[0])}</small></li>`).join("");
-    $("steps").querySelectorAll("li.ch").forEach(li => li.onclick = () => { $("vid").currentTime = +li.dataset.t; $("vid").play(); });
-    $("vid").ontimeupdate = () => { const ct = $("vid").currentTime; let on = null;
-      $("steps").querySelectorAll("li.ch").forEach(li => { li.classList.remove("on"); if (+li.dataset.t <= ct + 0.2) on = li; }); if (on) on.classList.add("on"); };
-  } else $("steps").innerHTML = pick(t.steps).map(s => `<li>${s}</li>`).join("");
+  src($("gif"), pick(t.media) + ".gif"); $("gif").alt = t.title + " – animated how-to";
+  $("vbadge").textContent = t.group + " · " + (os==="pc" ? "PC" : "Mac"); $("title").textContent = t.title;
+  $("steps").innerHTML = pick(t.steps).map(s => `<li>${s}</li>`).join("");
   $("tip").innerHTML = t.tip || ""; $("tip").style.display = t.tip ? "block" : "none";
   $("viewer").classList.add("on"); document.title = t.title + " · Continu PowerPoint Help";
 }
-function shut(){ $("viewer").classList.remove("on"); $("gif").removeAttribute("src"); $("vid").pause(); $("vid").removeAttribute("src"); document.title = "Continu · PowerPoint Help"; }
+function shut(){ $("viewer").classList.remove("on"); $("gif").removeAttribute("src"); document.title = "Continu · PowerPoint Help"; }
 function closeDrawer(){ $("drawer").classList.remove("on"); document.body.style.overflow = ""; }
 $("burger").onclick = () => { $("drawer").classList.add("on"); document.body.style.overflow = "hidden"; };
 $("dclose").onclick = closeDrawer; $("shade").onclick = closeDrawer;
