@@ -59,6 +59,14 @@ body.dark .intro .dot{background:#fff}
 h1{font-weight:300;font-size:clamp(46px,7.4vw,118px);line-height:1;letter-spacing:-.03em}
 h1 em{font-style:normal;color:var(--navy)}
 body.dark h1 em{color:var(--green)}
+/* desktop: title on one line across the top (wraps if the window is narrow), intro underneath, no icon */
+@media (min-width:981px){
+  .hero{grid-template-columns:1fr;gap:18px;align-items:start}
+  .hero h1{order:-1;font-size:clamp(56px,6.4vw,112px)}
+  .hero h1 br{display:none}
+  .intro .dot{display:none}
+  .intro p{max-width:560px}
+}
 .rings{position:absolute;top:-40px;right:-140px;width:640px;height:540px;pointer-events:none;z-index:1}
 /* area tabs (above the cards) */
 .pills{display:inline-flex;gap:4px;background:var(--soft);border-radius:999px;padding:5px;flex-wrap:wrap;margin-bottom:18px}
@@ -170,7 +178,7 @@ body.dark .tip{background:var(--soft2)}
   <main class="main">
     <section class="hero">
       <div class="intro"><div class="dot"><i></i></div><p>Short animated how-tos for the Continu templates. Pick a topic to watch every click, step by step – choose Mac or PC above.</p></div>
-      <h1><span id="appName">PowerPoint</span><br><em>help</em></h1>
+      <h1><span id="appName">PowerPoint</span> <br><em>help</em></h1>
     </section>
     <nav class="pills" id="pills" aria-label="Help areas"></nav>
     <div class="filter" id="filter"></div>
